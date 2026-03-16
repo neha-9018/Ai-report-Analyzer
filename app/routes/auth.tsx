@@ -13,7 +13,7 @@ const Auth: () => React.JSX.Element = () => {
     const navigate = useNavigate();
 
     useEffect(()=>{
-     if(auth.isAuthenticated) navigate('next');
+     if(auth.isAuthenticated) navigate(next);
     }, [auth.isAuthenticated,next])
     return (
         <main className= "bg-[url('/images/bg-main.svg')] bg-cover bg-center min-h-screen px-6 md:px-10">
