@@ -5,13 +5,13 @@
 @theme {
   --font-sans: "Mona Sans", ui-sans-serif, system-ui, sans-serif,
   "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --color-dark-200: #475467;
-  --color-light-blue-100: #c1d3f81a;
-  --color-light-blue-200: #a7bff14d;
+  --color-dark-200: #025bea;
+  --color-light-blue-100: rgba(98, 116, 159, 0.1);
+  --color-light-blue-200: rgba(163, 168, 188, 0.3);
 
-  --color-badge-green: #d5faf1;
-  --color-badge-red: #f9e3e2;
-  --color-badge-yellow: #fceed8;
+  --color-badge-green: #9aecd9;
+  --color-badge-red: #4e86b3;
+  --color-badge-yellow: #0a0ae6;
 
   --color-badge-green-text: #254d4a;
   --color-badge-red-text: #752522;

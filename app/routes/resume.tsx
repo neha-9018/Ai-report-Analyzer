@@ -2,6 +2,14 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { usePuterStore } from "~/lib/puter";
 import ScoreCircle from "~/Components/ScoreCircle";
+import {
+    ResponsiveContainer,
+    BarChart,
+    Bar,
+    XAxis,
+    YAxis,
+    Tooltip,
+} from "recharts";
 
 export default function ResumePage() {
     const { id } = useParams();
@@ -12,6 +20,7 @@ export default function ResumePage() {
 
     const [imageUrl, setImageUrl] = useState("");
     const [resumeUrl, setResumeUrl] = useState("");
+
 
     // ✅ Fetch stored data
     useEffect(() => {
@@ -88,6 +97,16 @@ export default function ResumePage() {
             console.warn("Still not JSON:", err);
         }
     }
+    const chartData =
+        feedback && typeof feedback !== "string"
+            ? [
+                { name: "ATS", score: feedback.ATS?.score || 0 },
+                { name: "Content", score: feedback.content?.score || 0 },
+                { name: "Structure", score: feedback.structure?.score || 0 },
+                { name: "Skills", score: feedback.skills?.score || 0 },
+                { name: "Tone", score: feedback.toneAndStyle?.score || 0 },
+            ]
+            : [];
 
     // ✅ Render tips
     const renderTips = (tips: any[]) => {
@@ -114,105 +133,200 @@ export default function ResumePage() {
     };
 
     return (
-        <div className="p-10 space-y-8">
+        <main className="min-h-screen bg-gray-50">
+            <div className="max-w-7xl mx-auto p-6 md:p-10">
 
-            <h1 className="text-3xl font-bold">Resume Analysis</h1>
+                {/* Header */}
+                <div className="mb-8">
+                    <h1 className="text-4xl font-bold text-gray-900">
+                        Resume Analysis Dashboard
+                    </h1>
+                    <p className="text-gray-500 mt-2">
+                        AI-powered evaluation of your resume
+                    </p>
+                </div>
 
-            {/* ✅ Basic Info */}
-            <div className="bg-white p-6 rounded-xl shadow">
-                <p><strong>Company:</strong> {data.companyName}</p>
-                <p><strong>Job Title:</strong> {data.jobTitle}</p>
+                {/* Top Section */}
+                <div className="grid lg:grid-cols-3 gap-6 mb-8">
 
-                {resumeUrl && (
-                    <a
-                        href={resumeUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-500 underline"
-                    >
-                        View Resume
-                    </a>
-                )}
-            </div>
+                    {/* Resume Info */}
+                    <div className="bg-white rounded-2xl shadow-sm p-6">
+                        <h2 className="font-semibold text-xl mb-4">
+                            Resume Details
+                        </h2>
 
-            {/* ✅ Preview */}
-            <div className="bg-white p-6 rounded-xl shadow">
-                <h3 className="font-semibold mb-3">Resume Preview</h3>
-
-                {imageUrl ? (
-                    <img
-                        src={imageUrl}
-                        alt="Resume preview"
-                        className="w-80 border"
-                    />
-                ) : (
-                    <p>Loading preview...</p>
-                )}
-            </div>
-
-            {/* ✅ AI Dashboard */}
-            {feedback && typeof feedback !== "string" && (
-                <div className="space-y-6">
-
-                    {/* Score */}
-                    <div className="bg-white p-6 rounded-xl shadow flex items-center gap-6">
-                        <ScoreCircle score={feedback.overallScore} />
-                        <div>
-                            <h2 className="text-xl font-bold">Overall Score</h2>
-                            <p className="text-gray-500">
-                                Based on ATS, content, skills & tone
+                        <div className="space-y-3">
+                            <p>
+                            <span className="font-semibold">
+                                Company:
+                            </span>{" "}
+                                {data.companyName}
                             </p>
+
+                            <p>
+                            <span className="font-semibold">
+                                Job Title:
+                            </span>{" "}
+                                {data.jobTitle}
+                            </p>
+
+                            {resumeUrl && (
+                                <a
+                                    href={resumeUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center mt-4 px-4 py-2 bg-indigo-600 text-white rounded-lg"
+                                >
+                                    View Resume
+                                </a>
+                            )}
                         </div>
                     </div>
 
-                    {/* Sections */}
-                    <div className="grid md:grid-cols-2 gap-6">
-
-                        <div className="bg-white p-6 rounded-xl shadow">
-                            <h2 className="text-lg font-bold">
-                                ATS ({feedback.ATS.score})
+                    {/* Overall Score */}
+                    <div className="bg-white rounded-2xl shadow-sm p-6 flex items-center justify-center">
+                        <div className="text-center">
+                            <ScoreCircle
+                                score={feedback?.overallScore || 0}
+                            />
+                            <h2 className="text-xl font-bold mt-4">
+                                Overall Score
                             </h2>
-                            {renderTips(feedback.ATS.tips)}
                         </div>
+                    </div>
 
-                        <div className="bg-white p-6 rounded-xl shadow">
-                            <h2 className="text-lg font-bold">
-                                Tone ({feedback.toneAndStyle.score})
-                            </h2>
-                            {renderTips(feedback.toneAndStyle.tips)}
-                        </div>
+                    {/* Resume Preview */}
+                    <div className="bg-white rounded-2xl shadow-sm p-6">
+                        <h2 className="font-semibold text-xl mb-4">
+                            Resume Preview
+                        </h2>
 
-                        <div className="bg-white p-6 rounded-xl shadow">
-                            <h2 className="text-lg font-bold">
-                                Content ({feedback.content.score})
-                            </h2>
-                            {renderTips(feedback.content.tips)}
-                        </div>
-
-                        <div className="bg-white p-6 rounded-xl shadow">
-                            <h2 className="text-lg font-bold">
-                                Structure ({feedback.structure.score})
-                            </h2>
-                            {renderTips(feedback.structure.tips)}
-                        </div>
-
-                        <div className="bg-white p-6 rounded-xl shadow md:col-span-2">
-                            <h2 className="text-lg font-bold">
-                                Skills ({feedback.skills.score})
-                            </h2>
-                            {renderTips(feedback.skills.tips)}
-                        </div>
-
+                        {imageUrl ? (
+                            <img
+                                src={imageUrl}
+                                alt="Resume Preview"
+                                className="rounded-xl border w-full"
+                            />
+                        ) : (
+                            <p>Loading Preview...</p>
+                        )}
                     </div>
                 </div>
-            )}
 
-            {/* ✅ Fallback (if still string) */}
-            {typeof feedback === "string" && (
-                <div className="bg-gray-100 p-4 rounded">
-                    {feedback}
-                </div>
-            )}
-        </div>
-    );
-}
+                {feedback && typeof feedback !== "string" && (
+                    <>
+                        {/* KPI Cards */}
+                        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+
+                            <div className="bg-blue-50 rounded-2xl p-5">
+                                <p className="text-gray-500">ATS</p>
+                                <h3 className="text-3xl font-bold">
+                                    {feedback.ATS?.score}
+                                </h3>
+                            </div>
+
+                            <div className="bg-purple-50 rounded-2xl p-5">
+                                <p className="text-gray-500">Content</p>
+                                <h3 className="text-3xl font-bold">
+                                    {feedback.content?.score}
+                                </h3>
+                            </div>
+
+                            <div className="bg-green-50 rounded-2xl p-5">
+                                <p className="text-gray-500">Structure</p>
+                                <h3 className="text-3xl font-bold">
+                                    {feedback.structure?.score}
+                                </h3>
+                            </div>
+
+                            <div className="bg-orange-50 rounded-2xl p-5">
+                                <p className="text-gray-500">Skills</p>
+                                <h3 className="text-3xl font-bold">
+                                    {feedback.skills?.score}
+                                </h3>
+                            </div>
+
+                            <div className="bg-pink-50 rounded-2xl p-5">
+                                <p className="text-gray-500">Tone</p>
+                                <h3 className="text-3xl font-bold">
+                                    {feedback.toneAndStyle?.score}
+                                </h3>
+                            </div>
+
+                        </div>
+
+                        {/* Analytics Chart */}
+                        <div className="bg-white rounded-2xl shadow-sm p-6 mb-8">
+                            <h2 className="text-2xl font-bold mb-6">
+                                Performance Analytics
+                            </h2>
+
+                            <div className="h-96">
+                                <ResponsiveContainer
+                                    width="100%"
+                                    height="100%"
+                                >
+                                    <BarChart data={chartData}>
+                                        <XAxis dataKey="name" />
+                                        <YAxis domain={[0, 100]} />
+                                        <Tooltip />
+                                        <Bar dataKey="score" />
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </div>
+                        </div>
+
+                        {/* Feedback Cards */}
+                        <div className="grid md:grid-cols-2 gap-6">
+
+                            <div className="bg-white rounded-2xl shadow-sm p-6">
+                                <h2 className="text-xl font-bold mb-4">
+                                    ATS ({feedback.ATS.score})
+                                </h2>
+                                {renderTips(feedback.ATS.tips)}
+                            </div>
+
+                            <div className="bg-white rounded-2xl shadow-sm p-6">
+                                <h2 className="text-xl font-bold mb-4">
+                                    Tone ({feedback.toneAndStyle.score})
+                                </h2>
+                                {renderTips(
+                                    feedback.toneAndStyle.tips
+                                )}
+                            </div>
+
+                            <div className="bg-white rounded-2xl shadow-sm p-6">
+                                <h2 className="text-xl font-bold mb-4">
+                                    Content ({feedback.content.score})
+                                </h2>
+                                {renderTips(feedback.content.tips)}
+                            </div>
+
+                            <div className="bg-white rounded-2xl shadow-sm p-6">
+                                <h2 className="text-xl font-bold mb-4">
+                                    Structure ({feedback.structure.score})
+                                </h2>
+                                {renderTips(
+                                    feedback.structure.tips
+                                )}
+                            </div>
+
+                            <div className="bg-white rounded-2xl shadow-sm p-6 md:col-span-2">
+                                <h2 className="text-xl font-bold mb-4">
+                                    Skills ({feedback.skills.score})
+                                </h2>
+                                {renderTips(feedback.skills.tips)}
+                            </div>
+
+                        </div>
+                    </>
+                )}
+
+                {typeof feedback === "string" && (
+                    <div className="bg-white rounded-2xl p-6 shadow-sm">
+                        {feedback}
+                    </div>
+                )}
+            </div>
+        </main>
+    )};

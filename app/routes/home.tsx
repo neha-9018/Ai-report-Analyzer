@@ -1,48 +1,49 @@
-
 import type { Route } from "./+types/home";
 import Navbar from "~/Components/Navbar";
 import { resumes } from "../../constant";
 import ResumeCard from "~/Components/ResumeCard";
-import {usePuterStore} from "~/lib/puter";
-import {useLocation, useNavigate} from "react-router";
-import {useEffect} from "react";
+import { usePuterStore } from "~/lib/puter";
+import { useNavigate } from "react-router";
+import { useEffect } from "react";
 
 export function meta({}: Route.MetaArgs) {
-  return [
-    { title: "Resumind" },
-    { name: "description", content: "Smart feedback for your dream job!" },
-  ];
+    return [
+        { title: "Resumind" },
+        { name: "description", content: "Smart feedback for your dream job!" },
+    ];
 }
 
 export default function Home() {
-    const { isLoading , auth} = usePuterStore();
+    const { auth } = usePuterStore();
     const navigate = useNavigate();
 
-    useEffect(   ()=>{
-        if(!auth.isAuthenticated) navigate('/auth?next=/');
-    }, [auth.isAuthenticated])
-  return (
-      <main className="bg-[url('/images/bg-main.svg')] bg-cover bg-center min-h-screen px-6 md:px-10">
-        <Navbar/>
+    useEffect(() => {
+        if (!auth.isAuthenticated) {
+            navigate("/auth");
+        }
+    }, [auth.isAuthenticated, navigate]);
 
+    return (
+        <main className="bg-[url('/images/bg-main.svg')] bg-cover bg-center min-h-screen px-6 md:px-10">
+            <Navbar />
 
-        <section className="max-w-6xl mx-auto py-16">
-          <div className="text-center mb-16 max-w-3xl mx-auto">
-            <h1 className="text-5xl font-bold text-gray-800">
-              Track Your Applications & Resume Ratings
-            </h1>
+            <section className="max-w-6xl mx-auto py-16">
+                <div className="text-center mb-16 max-w-3xl mx-auto">
+                    <h1 className="text-5xl font-bold text-gray-800">
+                        Track Your Applications & Resume Ratings
+                    </h1>
 
-            <p className="text-gray-500 mt-4 text-lg">
-              Review your submissions and check AI-powered feedback.
-            </p>
-          </div>
+                    <p className="text-gray-500 mt-4 text-lg">
+                        Review your submissions and check AI-powered feedback.
+                    </p>
+                </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-            {resumes.map((resume) => (
-                <ResumeCard key={resume.id} resume={resume}/>
-            ))}
-          </div>
-        </section>
-      </main>
-  );
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                    {resumes.map((resume) => (
+                        <ResumeCard key={resume.id} resume={resume} />
+                    ))}
+                </div>
+            </section>
+        </main>
+    );
 }
